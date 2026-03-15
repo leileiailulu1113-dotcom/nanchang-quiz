@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    <title>Nanchang: City of Heroes - Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background: #f7f8fa;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 950px;
+            width: 100%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+        .title {
+            text-align: center;
+            color: #c93737;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        /* 老师入口样式 */
+        .teacher-entrance {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+        .teacher-btn {
+            padding: 6px 12px;
+            background: #3a4e63;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .login-box, .teacher-login {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .login-box h2, .teacher-login h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 18px;
+        }
+        .login-box input, .teacher-login input {
+            padding: 10px 14px;
+            width: 90%;
+            max-width: 280px;
+            margin: 8px 0;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+        .login-btn, .teacher-submit {
+            padding: 10px 30px;
+            background: #c93737;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 90%;
+            max-width: 280px;
+        }
+        .teacher-submit {
+            background: #3a4e63;
+        }
+        .quiz-section, .teacher-score, .answer-section {
+            display: none;
+            width: 100%;
+        }
+        .question {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #c93737;
+            background: #fcfcfc;
+            border-radius: 6px;
+        }
+        .question h3 {
+            margin-bottom: 10px;
+            color: #222;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .options {
+            margin-left: 15px;
+        }
+        .options label {
+            display: block;
+            margin: 8px 0;
+            font-size: 15px;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+        .fill-blank, .sentence-transform {
+            padding: 8px 10px;
+            width: 90%;
+            max-width: 320px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .short-answer {
+            padding: 10px 12px;
+            width: 90%;
+            min-height: 80px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            resize: vertical;
+        }
+        .submit-btn, .show-answer-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-right: 10px;
+            width: 45%;
+            min-width: 120px;
+        }
+        .submit-btn {
+            background: #2d9d57;
+            color: white;
+        }
+        .show-answer-btn {
+            background: #f39c12;
+            color: white;
+        }
+        .result, .answer-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .result h2, .answer-section h2 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+        .score-table, .class-score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .score-table th, .score-table td,
+        .class-score-table th, .class-score-table td {
+            border: 1px solid #eee;
+            padding: 8px 5px;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .score-table th, .class-score-table th {
+            background: #3a4e63;
+            color: white;
+        }
+        .total-score {
+            font-size: 16px;
+            font-weight: bold;
+            color: #c93737;
+            text-align: center;
+            margin-top: 15px;
+        }
+        /* 正确答案样式 */
+        .answer-item {
+            margin: 12px 0;
+            padding: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        .answer-item h4 {
+            color: #2d9d57;
+            margin-bottom: 5px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .score-tip {
+            color: #f39c12;
+            font-size: 13px;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+        /* 段落标题 */
+        .para-title {
+            color: #c93737;
+            margin: 10px 0;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .part-title {
+            color: #3a4e63;
+            margin: 15px 0 5px 10px;
+            font-size: 16px;
+        }
+        /* 适配小屏手机 */
+        @media (max-width: 375px) {
+            .submit-btn, .show-answer-btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .title {
+                font-size: 18px;
+            }
+            .question h3 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Nanchang: The City of Heroes - English Quiz</h1>
+        <!-- 老师成绩查看入口 -->
+        <div class="teacher-entrance">
+            <button class="teacher-btn" onclick="showTeacherLogin()">Teacher's Score View</button>
+        </div>
+
+        <!-- 学生登录区 -->
+        <div class="login-box" id="studentLoginBox">
+            <h2>Student Login</h2>
+            <input type="text" id="studentName" placeholder="Your Name" autocomplete="off"><br>
+            <input type="text" id="studentId" placeholder="Your Student ID" autocomplete="off"><br>
+            <button class="login-btn" onclick="studentLogin()">Start Quiz</button>
+        </div>
+
+        <!-- 老师登录区 -->
+        <div class="teacher-login" id="teacherLoginBox">
+            <h2>Teacher Login</h2>
+            <input type="password" id="teacherPwd" placeholder="Teacher Password (123456)" autocomplete="off"><br>
+            <button class="teacher-submit" onclick="teacherLogin()">View Class Score</button>
+        </div>
+
+        <!-- 老师全班成绩区 -->
+        <div class="teacher-score" id="teacherScoreBox">
+            <h2>Class Score Summary</h2>
+            <table class="class-score-table" id="classScoreTable">
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Score</th>
+                    <th>Submit Time</th>
+                </tr>
+                <!-- 成绩自动渲染 -->
+            </table>
+            <button class="teacher-btn" onclick="backToIndex()" style="margin-top:20px;">Back to Index</button>
+        </div>
+
+        <!-- 学生答题区 -->
+        <div class="quiz-section" id="studentQuizBox">
+            <!-- Paragraph 1 英雄城总起 -->
+            <h3 class="para-title">Paragraph 1: The City of Heroes</h3>
+            <div class="question">
+                <h3>1. Fill in the blank: The red sculpture of the "August 1st" military flag serves as a ______ (精神灯塔) when the high-speed train passes over the Ganjiang River Bridge.</h3>
+                <input type="text" class="fill-blank" name="q1" id="q1" autocomplete="off">
+            </div>
+            <div class="question">
+                <h3>2. Multiple Choice: Nanchang is the birthplace of ______.</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A" id="q2A"> A. the Red Army</label>
+                    <label><input type="radio" name="q2" value="B" id="q2B"> B. the People's Liberation Army</label>
+                    <label><input type="radio" name="q2" value="C" id="q2C"> C. the Eighth Route Army</label>
+                </div>
+            </div>
+            <div class="question">
+                <h3>3. True or False: Nanchang is a place where only modern culture develops. (T/F)</h3>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="T" id="q3T"> T</label>
+                    <label><input type="radio" name="q3" value="F" id="q3F"> F</label>
+                </div>
+            </div>
+
+            <!-- Paragraph 2 地理与城市历史 -->
+            <h3 class="para-title">Paragraph 2: Geography & City History</h3>
+            <!-- 地理部分 -->
+            <h4 class="part-title">Geography</h4>
+            <div class="question">
+                <h3>4. Fill in the blank: Nanchang is nestled on the fertile Poyang Lake Plain and along the ______ (赣江中游) of the Ganjiang River.</h3>
+                <input type="text" class="fill-blank" name="q4" id="q4" autocomplete="off">
+            </div>
+            <div class="question">
+                <h3>5. Multiple Choice: Which two rivers nourish the land of Nanchang?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="A" id="q5A"> A. Ganjiang River and Yangtze River</label>
+                    <label><input type="radio" name="q5" value="B" id="q5B"> B. Ganjiang River and Fuhe River</label>
+                    <label><input type="radio" name="q5" value="C" id="q5C"> C. Fuhe River and Yellow River</label>
+                </div>
+            </div>
+            <div class="question">
+                <h3>6. Short Answer: Why is Nanchang blessed with rich agricultural resources?</h3>
+                <textarea class="short-answer" name="q6" id="q6" autocomplete="off"></textarea>
+            </div>
+
+            <!-- 历史与名称部分 -->
+            <h4 class="part-title">History & Name</h4>
+            <div class="question">
+                <h3>7. Fill in the blank: Guan Ying bestowed the name "Nanchang" on the city, which means ______ (南方繁荣) in English.</h3>
+                <input type="text" class="fill-blank" name="q7" id="q7" autocomplete="off">
+            </div>
+            <div class="question">
+                <h3>8. True or False: The name "Nanchang" has changed many times in over 2000 years. (T/F)</h3>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="T" id="q8T"> T</label>
+                    <label><input type="radio" name="q8" value="F" id="q8F"> F</label>
+                </div>
+            </div>
+            <div class="question">
+                <h3>9. Multiple Choice: Nanchang was first built as "Guan Ying City" in ______.</h3>
+                <div class="options">
+                    <label><input type="radio" name="q9" value="A" id="q9A"> A. 202 BC</label>
+                    <label><input type="radio" name="q9" value="B" id="q9B"> B. 220 BC</label>
+                    <label><input type="radio" name="q9" value="C" id="q9C"> C. 202 AD</label>
+                </div>
+            </div>
+
+            <!-- 精神与意义部分 -->
+            <h4 class="part-title">Spirit & Significance</h4>
+            <div class="question">
+                <h3>10. Fill in the blank: Nanchang was called Hongzhou in the Sui and Tang dynasties, and ______ (隆兴府) in the Song and Yuan dynasties.</h3>
+                <input type="text" class="fill-blank" name="q10" id="q10" autocomplete="off">
+            </div>
+            <div class="question">
+                <h3>11. Short Answer: What spirit is sown by the original intention of Nanchang's name?</h3>
+                <textarea class="short-answer" name="q11" id="q11" autocomplete="off"></textarea>
+            </div>
+            <div class="question">
+                <h3>12. Sentence Transformation: Change the sentence into passive voice. Nanchang's geographical location made it a strategic point in ancient China.</h3>
+                <input type="text" class="sentence-transform" name="q12" id="q12" autocomplete="off">
+            </div>
+
+            <button class="submit-btn" onclick="submitQuiz()">Submit & Get Score</button>
+            <button class="show-answer-btn" style="display:none;" id="tempBtn">View Answers</button>
+        </div>
+
+        <!-- 学生成绩+答案查看区 -->
+        <div class="result" id="studentResultBox">
+            <h2>Your Quiz Result</h2>
+            <table class="score-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Student ID</th>
+                    <th>Score</th>
+                    <th>Submit Time</th>
+                </tr>
+                <tr>
+                    <td id="showName"></td>
+                    <td id="showId"></td>
+                    <td id="showScore"></td>
+                    <td id="showTime"></td>
+                </tr>
+            </table>
+            <div class="total-score">Full Score: 100 | Your Score: <span id="finalScore"></span></div>
+            <button class="show-answer-btn" onclick="showAnswer()">View Correct Answers</button>
+        </div>
+
+        <!-- 正确答案区（主观题带评分要点） -->
+        <div class="answer-section" id="answerBox">
+            <h2>Correct Answers & Scoring Points</h2>
+            <div class="answer-item">
+                <h4>1. Fill in the blank: spiritual lighthouse</h4>
+            </div>
+            <div class="answer-item">
+                <h4>2. Multiple Choice: B (the People's Liberation Army)</h4>
+            </div>
+            <div class="answer-item">
+                <h4>3. True or False: F (False)</h4>
+            </div>
+            <div class="answer-item">
+                <h4>4. Fill in the blank: middle reaches</h4>
+                <p class="score-tip">评分要点：写middle reach也可得分</p>
+            </div>
+            <div class="answer-item">
+                <h4>5. Multiple Choice: B (Ganjiang River and Fuhe River)</h4>
+            </div>
+            <div class="answer-item">
+                <h4>6. Short Answer: It is on the fertile Poyang Lake Plain and has a well-developed water system, nourished by the Ganjiang and Fuhe rivers with fertile soil.</h4>
+                <p class="score-tip">评分要点：提到“鄱阳湖平原、赣江抚河、水系发达、土壤肥沃”任意2个关键词即可得分</p>
+            </div>
+            <div class="answer-item">
+                <h4>7. Fill in the blank: prosperity in the south</h4>
+            </div>
+            <div class="answer-item">
+                <h4>8. True or False: F (False)</h4>
+                <p class="score-tip">解析：虽曾更名洪州、隆兴府，但最终恢复南昌，并非2000多年多次更改</p>
+            </div>
+            <div class="answer-item">
+                <h4>9. Multiple Choice: A (202 BC)</h4>
+            </div>
+            <div class="answer-item">
+                <h4>10. Fill in the blank: Longxing Prefecture</h4>
+            </div>
+            <div class="answer-item">
+                <h4>11. Short Answer: The spirit of "the courage to be the first under heaven".</h4>
+                <p class="score-tip">评分要点：写出核心短语即可满分</p>
+            </div>
+            <div class="answer-item">
+                <h4>12. Sentence Transformation: It was made a strategic point in ancient China by Nanchang's geographical location.</h4>
+                <p class="score-tip">评分要点：包含was made被动结构+strategic point+逻辑通顺即可得分</p>
+            </div>
+            <button class="teacher-btn" onclick="backToIndex()">Back to Index</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量：本地存储全班成绩，钉钉/手机/电脑数据互通
+        let classScoreList = JSON.parse(localStorage.getItem('nanchangClassScore')) || [];
+        let currentStudent = { name: "", id: "" };
+        // 老师默认密码：123456（可自行修改）
+        const TEACHER_PWD = "123456";
+
+        // 页面初始化：适配钉钉内嵌，隐藏非核心区域
+        window.onload = function() {
+            document.getElementById("teacherLoginBox").style.display = "none";
+            document.getElementById("teacherScoreBox").style.display = "none";
+            document.getElementById("studentQuizBox").style.display = "none";
+            document.getElementById("studentResultBox").style.display = "none";
+            document.getElementById("answerBox").style.display = "none";
+            // 钉钉适配：禁止页面缩放
+            document.documentElement.style.zoom = "100%";
+        }
+
+        // 显示老师登录区
+        function showTeacherLogin() {
+            document.getElementById("studentLoginBox").style.display = "none";
+            document.getElementById("teacherLoginBox").style.display = "block";
+            document.getElementById("teacherScoreBox").style.display = "none";
+        }
+
+        // 学生登录（钉钉/手机端适配，无弹窗卡顿）
+        function studentLogin() {
+            const name = document.getElementById("studentName").value.trim();
+            const id = document.getElementById("studentId").value.trim();
+            if (!name || !id) {
+                alert("Please enter your name and student ID!");
+                return;
+            }
+            currentStudent.name = name;
+            currentStudent.id = id;
+            document.getElementById("studentLoginBox").style.display = "none";
+            document.getElementById("studentQuizBox").style.display = "block";
+        }
+
+        // 老师登录
+        function teacherLogin() {
+            const pwd = document.getElementById("teacherPwd").value.trim();
+            if (pwd !== TEACHER_PWD) {
+                alert("Wrong password! Please try again.");
+                return;
+            }
+            document.getElementById("teacherLoginBox").style.display = "none";
+            document.getElementById("teacherScoreBox").style.display = "block";
+            renderClassScore();
+        }
+
+        // 渲染全班成绩表（适配手机端横向滚动）
+        function renderClassScore() {
+            const table = document.getElementById("classScoreTable");
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            classScoreList.forEach(student => {
+                const row = table.insertRow(-1);
+                row.insertCell(0).innerText = student.id;
+                row.insertCell(1).innerText = student.name;
+                row.insertCell(2).innerText = student.score + " / 100";
+                row.insertCell(3).innerText = student.time;
+            });
+        }
+
+        // 学生提交答题+自动判分（主观题关键词匹配，贴合课堂评分）
+        function submitQuiz() {
+            let score = 0;
+            // 题型分值配置（总分100）
+            const fillScore = 6;    // 填空6题×6=36
+            const mcScore = 7;      // 选择3题×7=21
+            const tfScore = 6;      // 判断2题×6=12
+            const saScore = 8;      // 简答2题×8=16
+            const stScore = 15;     // 句型转换1题×15=15
+
+            // 1. 填空判分
+            const q1 = document.getElementById("q1").value.trim().toLowerCase();
+            if (q1 === "spiritual lighthouse") score += fillScore;
+            const q4 = document.getElementById("q4").value.trim().toLowerCase();
+            if (q4 === "middle reaches" || q4 === "middle reach") score += fillScore;
+            const q7 = document.getElementById("q7").value.trim().toLowerCase();
+            if (q7 === "prosperity in the south") score += fillScore;
+            const q10 = document.getElementById("q10").value.trim().toLowerCase();
+            if (q10 === "longxing prefecture") score += fillScore;
+
+            // 2. 单项选择判分
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            if (q2 && q2.value === "B") score += mcScore;
+            const q5 = document.querySelector('input[name="q5"]:checked');
+            if (q5 && q5.value === "B") score += mcScore;
+            const q9 = document.querySelector('input[name="q9"]:checked');
+            if (q9 && q9.value === "A") score += mcScore;
+
+            // 3. 判断正误判分
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            if (q3 && q3.value === "F") score += tfScore;
+            const q8 = document.querySelector('input[name="q8"]:checked');
+            if (q8 && q8.value === "F") score += tfScore;
+
+            // 4. 简答判分（关键词匹配，容错率高）
+            const q6 = document.getElementById("q6").value.toLowerCase();
+            const q6Key = ["poyang lake plain", "ganjiang", "fuhe", "fertile soil", "well-developed water system"];
+            if (q6Key.some(key => q6.includes(key))) score += saScore;
+            const q11 = document.getElementById("q11").value.toLowerCase();
+            if (q11.includes("courage to be the first under heaven")) score += saScore;
+
+            // 5. 句型转换判分（核心语法点匹配）
+            const q12 = document.getElementById("q12").value.toLowerCase();
+            if (q12.includes("was made") && q12.includes("strategic point")) score += stScore;
+
+            // 显示个人成绩
+            const now = new Date().toLocaleString();
+            document.getElementById("showName").innerText = currentStudent.name;
+            document.getElementById("showId").innerText = currentStudent.id;
+            document.getElementById("showScore").innerText = score + " / 100";
+            document.getElementById("finalScore").innerText = score;
+            document.getElementById("showTime").innerText = now;
+
+            // 保存成绩（去重，同一学号覆盖最新成绩）
+            saveStudentScore(currentStudent.id, currentStudent.name, score, now);
+
+            // 切换显示区域
+            document.getElementById("studentQuizBox").style.display = "none";
+            document.getElementById("studentResultBox").style.display = "block";
+        }
+
+        // 保存成绩到本地存储（钉钉/手机/电脑登录均可查看，数据不丢失）
+        function saveStudentScore(id, name, score, time) {
+            const index = classScoreList.findIndex(item => item.id === id);
+            if (index > -1) {
+                classScoreList[index] = { id, name, score, time };
+            } else {
+                classScoreList.push({ id, name, score, time });
+            }
+            localStorage.setItem('nanchangClassScore', JSON.stringify(classScoreList));
+        }
+
+        // 显示正确答案
+        function showAnswer() {
+            document.getElementById("studentResultBox").style.display = "none";
+            document.getElementById("answerBox").style.display = "block";
+        }
+
+        // 返回首页（适配钉钉，刷新不丢失数据）
+        function backToIndex() {
+            window.location.reload();
+        }
+
+        // 钉钉适配：禁止页面跳转，兼容内嵌容器
+        window.addEventListener('popstate', function() {
+            document.getElementById("studentLoginBox").style.display = "block";
+        });
+    </script>
+</body>
+</html>
