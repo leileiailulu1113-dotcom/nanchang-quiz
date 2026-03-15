@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nanchang: City of Heroes - Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background: #f7f8fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+        .title {
+            text-align: center;
+            color: #c93737;
+            margin-bottom: 30px;
+            font-size: 26px;
+        }
+        .login-box {
+            text-align: center;
+            margin: 60px 0;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-box input {
+            padding: 12px 16px;
+            width: 280px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+        .login-btn {
+            padding: 12px 35px;
+            background: #c93737;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .quiz-section {
+            display: none;
+        }
+        .question {
+            margin: 22px 0;
+            padding: 18px;
+            border-left: 5px solid #c93737;
+            background: #fcfcfc;
+            border-radius: 6px;
+        }
+        .question h3 {
+            margin-bottom: 12px;
+            color: #222;
+            font-size: 17px;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .options label {
+            display: block;
+            margin: 9px 0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .fill-blank {
+            padding: 8px 12px;
+            width: 240px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .submit-btn {
+            background: #2d9d57;
+            color: white;
+            padding: 14px 35px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+        .result {
+            margin-top: 35px;
+            padding: 25px;
+            background: #f5f7fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .result h2 {
+            margin-bottom: 18px;
+            color: #333;
+        }
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .score-table th, .score-table td {
+            border: 1px solid #eee;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .score-table th {
+            background: #3a4e63;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Nanchang: The City of Heroes - English Quiz</h1>
+
+        <!-- 登录 -->
+        <div class="login-box" id="loginBox">
+            <h2>Student Login</h2>
+            <input type="text" id="studentName" placeholder="Your Name"><br>
+            <input type="text" id="studentId" placeholder="Your Student ID"><br>
+            <button class="login-btn" onclick="login()">Start Quiz</button>
+        </div>
+
+        <!-- 答题区 -->
+        <div class="quiz-section" id="quizSection">
+            <div class="question">
+                <h3>1. Multiple Choice: Nanchang is the birthplace of ______.</h3>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A. the Red Army</label>
+                    <label><input type="radio" name="q1" value="B"> B. the People's Liberation Army</label>
+                    <label><input type="radio" name="q1" value="C"> C. the Eighth Route Army</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>2. True or False: Nanchang is a place where only modern culture develops. (T/F)</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="T"> T</label>
+                    <label><input type="radio" name="q2" value="F"> F</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>3. Fill in the blank: The red sculpture of the "August 1st" military flag is a ______ (精神灯塔).</h3>
+                <input type="text" class="fill-blank" name="q3">
+            </div>
+
+            <div class="question">
+                <h3>4. Multiple Choice: When did the Nanchang Uprising break out?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A. August 1, 1927</label>
+                    <label><input type="radio" name="q4" value="B"> B. July 1, 1927</label>
+                    <label><input type="radio" name="q4" value="C"> C. October 1, 1949</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>5. Fill in the blank: The name "Nanchang" means ______ (南方繁荣).</h3>
+                <input type="text" class="fill-blank" name="q5">
+            </div>
+
+            <button class="submit-btn" onclick="submitQuiz()">Submit & Get Score</button>
+
+            <!-- 结果 -->
+            <div class="result" id="resultBox">
+                <h2>Your Result</h2>
+                <table class="score-table">
+                    <tr>
+                        <th>Name</th>
+                        <th>ID</th>
+                        <th>Score</th>
+                        <th>Time</th>
+                    </tr>
+                    <tr>
+                        <td id="showName"></td>
+                        <td id="showId"></td>
+                        <td id="showScore"></td>
+                        <td id="showTime"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let studentName = "";
+        let studentId = "";
+
+        // 登录
+        function login() {
+            studentName = document.getElementById("studentName").value.trim();
+            studentId = document.getElementById("studentId").value.trim();
+            if (!studentName || !studentId) {
+                alert("Please enter your name and student ID!");
+                return;
+            }
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("quizSection").style.display = "block";
+        }
+
+        // 提交判分
+        function submitQuiz() {
+            let score = 0;
+            const base = 20;
+
+            // Q1
+            let q1 = document.querySelector('input[name="q1"]:checked');
+            if(q1 && q1.value==="B") score += base;
+
+            // Q2
+            let q2 = document.querySelector('input[name="q2"]:checked');
+            if(q2 && q2.value==="F") score += base;
+
+            // Q3
+            let q3 = document.querySelector('input[name="q3"]').value.trim().toLowerCase();
+            if(q3==="spiritual lighthouse") score += base;
+
+            // Q4
+            let q4 = document.querySelector('input[name="q4"]:checked');
+            if(q4 && q4.value==="A") score += base;
+
+            // Q5
+            let q5 = document.querySelector('input[name="q5"]').value.trim().toLowerCase();
+            if(q5==="prosperous south") score += base;
+
+            // 显示结果
+            document.getElementById("showName").innerText = studentName;
+            document.getElementById("showId").innerText = studentId;
+            document.getElementById("showScore").innerText = score + " / 100";
+            document.getElementById("showTime").innerText = new Date().toLocaleString();
+            document.getElementById("resultBox").style.display = "block";
+        }
+    </script>
+</body>
+</html>
